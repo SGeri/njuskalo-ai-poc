@@ -44,7 +44,7 @@ export const GENERATE_FILTER_SYSTEM_PROMPT =
   "fuelEfficiencyTo": <number> (optional)
 }
 ` +
-  "\n\nThere is one mandatory field, 'explanation' in which you should explain how you came to the conclusion of the filter you replied with. Make sure that the values you provide match the appropriate types and only use the available options for enums.\n\n" +
+  "\n\nThere is one mandatory field, 'explanation' in which you should explain how you came to the conclusion of the filter you replied with. This message is sent back to the user, so do not get technical, only elaborate on the thought process. Make sure that the values you provide match the appropriate types and only use the available options for enums.\n\n" +
   "Available enums and corresponding values:\n" +
   `Make: ${Object.values(Make).join(", ")}\n` +
   `FuelType: ${Object.values(FuelType).join(", ")}\n` +
