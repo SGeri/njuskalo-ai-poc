@@ -28,6 +28,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Textarea } from "./ui/textarea";
 import AIResultAnimation from "./ai-generating-animation";
+import clsx from "clsx";
 
 type CarDealershipAiProps = {
   onAIRequest: (input: string) => Promise<{
@@ -41,6 +42,7 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiExplanation, setAiExplanation] = useState<string>();
   const [filters, setFilters] = useState<Partial<CarFilters>>();
+  const [updatedFields, setUpdatedFields] = useState<string[]>([]);
 
   const handleGenerateFilter = async () => {
     setIsAiLoading(true);
@@ -48,6 +50,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
 
     const result = await onAIRequest(userInput);
     setAiExplanation(result.explanation);
+
+    const updatedKeys = Object.keys(result.filters);
+    setUpdatedFields(updatedKeys);
+
     setFilters(result.filters);
 
     setIsAiLoading(false);
@@ -58,7 +64,11 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
     value: CarFilters[T]
   ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+    setUpdatedFields([]);
   };
+
+  const isFieldUpdated = (field: keyof CarFilters) =>
+    updatedFields.includes(field as string);
 
   return (
     <div className="container mx-auto w-full px-4 py-8">
@@ -113,7 +123,13 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("make", value as Make)
               }
             >
-              <SelectTrigger className="w-[220px]">
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("make") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
                 <SelectValue placeholder="Car brand" />
               </SelectTrigger>
               <SelectContent>
@@ -137,6 +153,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("yearFrom", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("yearFrom") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
               <Input
                 type="number"
@@ -146,6 +166,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("yearTo", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("yearTo") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
             </div>
           </div>
@@ -161,6 +185,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("priceFrom", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("priceFrom") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
               <Input
                 type="number"
@@ -170,6 +198,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("priceTo", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("priceTo") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
             </div>
           </div>
@@ -183,7 +215,13 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("fuelType", value as FuelType)
               }
             >
-              <SelectTrigger className="w-[220px]">
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("fuelType") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
                 <SelectValue placeholder="Fuel type" />
               </SelectTrigger>
               <SelectContent>
@@ -205,8 +243,14 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("transmission", value as Transmission)
               }
             >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Fuel type" />
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("transmission") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
+                <SelectValue placeholder="Transmission" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(Transmission).map((transmission) => (
@@ -228,6 +272,9 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("power", parseInt(e.target.value))
               }
               disabled={isAiLoading}
+              className={clsx(
+                isFieldUpdated("power") && "border-2 border-blue-300 rounded-lg"
+              )}
             />
           </div>
 
@@ -242,6 +289,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("engineCapacity", parseFloat(e.target.value))
               }
               disabled={isAiLoading}
+              className={clsx(
+                isFieldUpdated("engineCapacity") &&
+                  "border-2 border-blue-300 rounded-lg"
+              )}
             />
           </div>
 
@@ -256,6 +307,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("mileageFrom", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("mileageFrom") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
               <Input
                 type="number"
@@ -265,6 +320,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("mileageTo", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("mileageTo") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
             </div>
           </div>
@@ -281,8 +340,14 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 )
               }
             >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Fuel type" />
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("emissionStandard") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
+                <SelectValue placeholder="Emission Standard" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(EmissionStandard).map((standard) => (
@@ -303,8 +368,14 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("bodyType", value as BodyType)
               }
             >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Fuel type" />
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("bodyType") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
+                <SelectValue placeholder="Body type" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(BodyType).map((bodyType) => (
@@ -327,6 +398,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("doorsFrom", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("doorsFrom") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
               <Input
                 type="number"
@@ -336,6 +411,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("doorsTo", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("doorsTo") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
             </div>
           </div>
@@ -348,6 +427,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("airConditioning", checked)
               }
               disabled={isAiLoading}
+              className={clsx(
+                isFieldUpdated("airConditioning") &&
+                  "border-2 border-blue-300 rounded-lg"
+              )}
             />
             <Label htmlFor="airConditioning">Air Conditioning</Label>
           </div>
@@ -360,6 +443,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("sunroof", checked)
               }
               disabled={isAiLoading}
+              className={clsx(
+                isFieldUpdated("sunroof") &&
+                  "border-2 border-blue-300 rounded-lg"
+              )}
             />
             <Label htmlFor="sunroof">Sunroof</Label>
           </div>
@@ -373,8 +460,14 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("color", value as Color)
               }
             >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Fuel type" />
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("color") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
+                <SelectValue placeholder="Color" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(Color).map((color) => (
@@ -398,8 +491,14 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 )
               }
             >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Fuel type" />
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("interiorMaterial") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
+                <SelectValue placeholder="Interior material" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(InteriorMaterial).map((material) => (
@@ -421,6 +520,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("dateListedFrom", e.target.value)
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("dateListedFrom") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
               <Input
                 type="date"
@@ -429,6 +532,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("dateListedTo", e.target.value)
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("dateListedTo") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
             </div>
           </div>
@@ -442,8 +549,14 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("condition", value as Condition)
               }
             >
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Fuel type" />
+              <SelectTrigger
+                className={clsx(
+                  "w-[220px]",
+                  isFieldUpdated("condition") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
+              >
+                <SelectValue placeholder="Condition" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(Condition).map((condition) => (
@@ -463,6 +576,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("serviceHistory", checked)
               }
               disabled={isAiLoading}
+              className={clsx(
+                isFieldUpdated("serviceHistory") &&
+                  "border-2 border-blue-300 rounded-lg"
+              )}
             />
             <Label htmlFor="serviceHistory">Service History Available</Label>
           </div>
@@ -475,6 +592,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                 handleFilterChange("accidentFree", checked)
               }
               disabled={isAiLoading}
+              className={clsx(
+                isFieldUpdated("accidentFree") &&
+                  "border-2 border-blue-300 rounded-lg"
+              )}
             />
             <Label htmlFor="accidentFree">Accident Free</Label>
           </div>
@@ -493,6 +614,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   )
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("co2EmissionFrom") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
               <Input
                 type="number"
@@ -502,6 +627,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   handleFilterChange("co2EmissionTo", parseInt(e.target.value))
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("co2EmissionTo") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
             </div>
           </div>
@@ -521,6 +650,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   )
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("fuelEfficiencyFrom") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
               <Input
                 type="number"
@@ -534,6 +667,10 @@ export function CarDealershipAi({ onAIRequest }: CarDealershipAiProps) {
                   )
                 }
                 disabled={isAiLoading}
+                className={clsx(
+                  isFieldUpdated("fuelEfficiencyTo") &&
+                    "border-2 border-blue-300 rounded-lg"
+                )}
               />
             </div>
           </div>
